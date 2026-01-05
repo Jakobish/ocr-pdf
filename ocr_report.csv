@@ -1,4 +1,18 @@
 file,status,note,producer,creation,moddate,dup_ratio
-/Users/kobi/dev/ocr-pdf/PDF/חשבונית_חשמל_שחר_ספטמבר_2024.pdf,copied_no_ocr,copy,Skia/PDF m86,Thu Oct 31 17:44:31 2024 IST,Thu Oct 31 17:44:31 2024 IST,0.0
+/Users/kobi/dev/ocr-pdf/PDF/חשבונית_חשמל_שחר_ספטמבר_2024.pdf,skipped_exists,,Skia/PDF m86,Thu Oct 31 17:44:31 2024 IST,Thu Oct 31 17:44:31 2024 IST,0.0
+/Users/kobi/dev/ocr-pdf/PDF/שרשור בו רמי מור טוען שחסכונית היא קו הבריאות.pdf,copied_no_ocr,copy,macOS Version 26.0 (Build 25A5316i) Quartz PDFContext,Tue Aug  5 03:59:59 2025 IDT,Tue Aug  5 03:59:59 2025 IDT,0.006944444444444444
+"/Users/kobi/dev/ocr-pdf/PDF/תקנות בית המשפט לענייני משפחה (סדרי דין), תשפ""א-2020.pdf",copied_no_ocr,copy,iOS Version 18.5 (Build 22F76) Quartz PDFContext,Wed Jun 11 00:20:49 2025 IDT,Wed Jun 11 00:20:49 2025 IDT,0.0
+/Users/kobi/dev/ocr-pdf/PDF/מנהלה+ומפרט+-+מכרז+פומבי+49-2024+אספקת+שירותי+תפעול+ותחזוקה+של.pdf,copied_no_ocr,copy,Microsoft® Word LTSC,Wed Jul 10 14:32:56 2024 IDT,Wed Jul 10 14:32:56 2024 IDT,0.0
+/Users/kobi/dev/ocr-pdf/PDF/סכסוך_על_דירה_משותפת.pdf,copied_no_ocr,copy,Microsoft® Word 2016,Sun Aug 29 08:00:09 2021 IDT,Mon Aug 30 10:33:47 2021 IDT,0.0
+/Users/kobi/dev/ocr-pdf/PDF/חשבונית_חשמל_שחר_ספטמבר_2024.ocr.pdf,copied_no_ocr,copy,Skia/PDF m86,Thu Oct 31 17:44:31 2024 IST,Thu Oct 31 17:44:31 2024 IST,0.0
+/Users/kobi/dev/ocr-pdf/PDF/פרוטוקול 19.3.24 והחלטה מיום 20.3.24.pdf,copied_no_ocr,copy,DTCom Form-IT! SDK 2.0,,Thu Mar 21 12:41:58 2024 IST,0.0
+/Users/kobi/dev/ocr-pdf/PDF/ע161 1.pdf,copied_no_ocr,copy,Microsoft: Print To PDF,Mon Apr 21 12:28:48 2025 IDT,Mon Apr 21 12:28:48 2025 IDT,0.061224489795918366
+/Users/kobi/dev/ocr-pdf/PDF/סכסוך_משפחתי_מזונות_רכוש.pdf,copied_no_ocr,copy,Microsoft® Word 2016,Sun Oct 17 09:26:08 2021 IDT,Wed Oct 20 08:18:17 2021 IDT,0.0
+/Users/kobi/dev/ocr-pdf/PDF/תלוש שכר יולי 2020 - שחר מורן מרסל conv.pdf,ok_ocr,ocr,iOS Version 18.3.2 (Build 22D82) Quartz PDFContext,Tue Mar 25 12:34:32 2025 IST,Tue Mar 25 12:34:32 2025 IST,0.0
+/Users/kobi/dev/ocr-pdf/PDF/תלוש שכר יולי 2020 - שחר מורן מרסל conv_copy.pdf,ok_ocr,ocr,iOS Version 18.3.2 (Build 22D82) Quartz PDFContext,Tue Mar 25 12:32:56 2025 IST,Tue Mar 25 12:32:56 2025 IST,0.0
 /Users/kobi/dev/ocr-pdf/PDF/��…˜„ 2020 „™šŒ�…š.pdf,error_1,"redo :: Using sandwich renderer since there is an RTL language
 Ghostscript 10.6.x contains JPEG encoding errors that may corrupt images. OCRmyPDF will attempt to mitigate, but this version is strongly not recommended. Please upgrade to a newer version. As of 2025-12, 10.6.0 is the latest version of Ghostscr",iText® 5.4.5 ©2000-2013 1T3XT BVBA (AGPL-version),Sun Feb 20 12:44:20 2022 IST,Sun Feb 20 12:44:20 2022 IST,0.27884615384615385
+/Users/kobi/dev/ocr-pdf/PDF/מנורה 2020 השתלמות.pdf,error_1,"redo :: Using sandwich renderer since there is an RTL language
+Ghostscript 10.6.x contains JPEG encoding errors that may corrupt images. OCRmyPDF will attempt to mitigate, but this version is strongly not recommended. Please upgrade to a newer version. As of 2025-12, 10.6.0 is the latest version of Ghostscr",iText® 5.4.5 ©2000-2013 1T3XT BVBA (AGPL-version),Sun Feb 20 12:44:20 2022 IST,Sun Feb 20 12:44:20 2022 IST,0.27884615384615385
+/Users/kobi/dev/ocr-pdf/PDF/פרוטוקוך מים 02-11-2021.pdf,ok_ocr,redo,Skia/PDF m139,Mon Aug 18 02:10:33 2025 IDT,Mon Aug 18 02:10:33 2025 IDT,0.25
+/Users/kobi/dev/ocr-pdf/PDF/נספחים חלק שלישי מ-ו עד ז (1).pdf,ok_ocr,ocr,PassportPDF,Sun Feb 14 13:25:46 2021 IST,Sun Feb 14 13:25:46 2021 IST,0.0
