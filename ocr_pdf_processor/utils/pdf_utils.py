@@ -98,15 +98,39 @@ def parse_xmp_date(s: str) -> Optional[datetime]:
     m = _XMP_RE.match(s)
     if not m:
         # try loose ISO and other common formats
+        # First try to handle timezone abbreviations by removing them
+        tz_removed = s
+        for tz in ['IDT', 'UTC', 'GMT', 'EST', 'EDT', 'CST', 'CDT', 'MST', 'MDT', 'PST', 'PDT']:
+            if s.endswith(' ' + tz):
+                tz_removed = s[:-len(' ' + tz)]
+                break
+        
         formats_to_try = [
             "%Y-%m-%d %H:%M:%S",
             "%Y-%m-%d", 
             "%d/%m/%Y", 
             "%m/%d/%Y",
-            "%a %b %d %H:%M:%S %Y %Z",  # e.g., "Mon Jul 17 17:26:13 2023 IDT"
             "%a %b %d %H:%M:%S %Y",    # without timezone
             "%a %b %d %H:%M:%S %Y %z", # with numeric timezone
         ]
+        
+        # Try with timezone removed first
+        for fmt in formats_to_try:
+            try:
+                return datetime.strptime(tz_removed, fmt)
+            except Exception:
+                pass
+                
+        # Try original string with timezone format as fallback
+        formats_with_tz = [
+            "%a %b %d %H:%M:%S %Y %Z",  # e.g., "Mon Jul 17 17:26:13 2023 IDT"
+        ]
+        
+        for fmt in formats_with_tz:
+            try:
+                return datetime.strptime(s, fmt)
+            except Exception:
+                pass
         for fmt in formats_to_try:
             try:
                 return datetime.strptime(s, fmt)

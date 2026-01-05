@@ -374,5 +374,4 @@ def main():
     csv_reporter.write_results(results, args.csv_append)
     
     print("\nDone. Report:", args.csv)
-    if not args.in_place:
-        print("Output dir:", args.output_dir)
+    print("OCR files created with .ocr.pdf suffix next to source files")

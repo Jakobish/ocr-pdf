@@ -16,17 +16,14 @@ def ocr_one(pdf_path: Path, out_dir: Path, args) -> OCRResult:
     
     Args:
         pdf_path: Path to the input PDF file
-        out_dir: Output directory for processed files
+        out_dir: Output directory for processed files (ignored - we create .ocr.pdf next to source)
         args: Configuration arguments object
         
     Returns:
         OCRResult object with processing results
     """
-    rel = pdf_path.relative_to(args.input_dir)
-    out_pdf = pdf_path if args.in_place else (out_dir / rel)
-
-    if not args.in_place:
-        out_pdf.parent.mkdir(parents=True, exist_ok=True)
+    # Always create output file next to source with .ocr suffix
+    out_pdf = pdf_path.parent / f"{pdf_path.stem}.ocr.pdf"
 
     # read metadata now (for timestamp preservation)
     meta = pdfinfo_dict(pdf_path)
@@ -57,14 +54,15 @@ def ocr_one(pdf_path: Path, out_dir: Path, args) -> OCRResult:
             dup_ratio=dup_ratio
         )
 
+    # Ensure output directory exists
+    out_pdf.parent.mkdir(parents=True, exist_ok=True)
+
     # Build ocrmypdf cmd
     base = [
         "ocrmypdf",
         "-l",
         args.lang,
         "--rotate-pages",
-        "--deskew",
-        "--clean",
         "--optimize",
         str(args.optimize),
         "--jobs",
@@ -89,9 +87,9 @@ def ocr_one(pdf_path: Path, out_dir: Path, args) -> OCRResult:
     note = "copy"
     status = "copied_no_ocr"
 
-    # write target safely (tmp then replace if in-place or same path)
+    # write target safely (always create .ocr.pdf next to source)
     tmp_target = out_pdf
-    if args.in_place or out_pdf.exists():
+    if out_pdf.exists():
         tmp_target = Path(str(out_pdf) + ".tmp_ocr")
 
     try:
@@ -99,9 +97,14 @@ def ocr_one(pdf_path: Path, out_dir: Path, args) -> OCRResult:
             note = "redo" if (text_exists and (redo or args.force_ocr_all)) else "ocr"
             cmd = base[:]
             if text_exists and (redo or args.force_ocr_all):
+                # For redo-ocr, avoid incompatible flags
                 cmd.append("--redo-ocr")
+                # Skip deskew and clean for redo-ocr compatibility
             else:
+                # For fresh OCR, add the processing flags
                 cmd.append("--skip-text")
+                cmd.append("--deskew")
+                cmd.append("--clean")
             if args.tesseract_time:
                 cmd += ["--tesseract-timeout", str(args.tesseract_time)]
             if args.tesseract_pagesegmode:
@@ -142,16 +145,22 @@ def ocr_one(pdf_path: Path, out_dir: Path, args) -> OCRResult:
                 )
             status = "ok_ocr"
         else:
-            # copy
-            if args.in_place:
-                # nothing to copy; we'll preserve times below
-                tmp_target = pdf_path
-            else:
-                # /bin/cp if available; else Python copy
+            # copy - create .ocr.pdf next to source
+            try:
+                tmp_target.write_bytes(pdf_path.read_bytes())
+            except Exception:
+                # fallback to cp command
                 code, _, _ = run(["/bin/cp", str(pdf_path), str(tmp_target)])
                 if code != 0:
-                    # fallback
-                    tmp_target.write_bytes(pdf_path.read_bytes())
+                    return OCRResult(
+                        file=str(pdf_path),
+                        status="error_copy",
+                        note="Failed to copy file",
+                        producer=producer,
+                        creation=creation,
+                        moddate=moddate,
+                        dup_ratio=dup_ratio,
+                    )
 
         # if tmp target is temp, replace
         if tmp_target != out_pdf:
