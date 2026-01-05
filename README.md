@@ -62,8 +62,8 @@ pip install ocr-pdf-processor
 # Basic usage - process all PDFs in current directory
 python app.py
 
-# Process specific directory
-python app.py /path/to/input /path/to/output
+# Process specific directory (outputs go to OCR subfolders)
+python app.py /path/to/input
 
 # In-place processing (recommended for safety)
 python app.py --in-place --preserve-fstimes xmp
@@ -84,7 +84,7 @@ Create a `ocr_config.json` file:
   "input_dir": "./pdfs",
   "output_dir": "./output",
   "include_glob": ["*.pdf"],
-  "exclude_glob": ["*_processed.pdf"],
+  "exclude_glob": ["OCR/**", "*/OCR/**", "*_processed.pdf"],
   "lang": "heb+eng",
   "optimize": 1,
   "jobs": 4,
@@ -104,7 +104,7 @@ python app.py --config ocr_config.json
 | Option               | Description                         | Default           |
 | -------------------- | ----------------------------------- | ----------------- |
 | `input_dir`          | Source directory for PDFs           | Current directory |
-| `output_dir`         | Output directory                    | `./out_pdfs`      |
+| `output_dir`         | Output directory (ignored)          | `./out_pdfs`      |
 | `--lang`             | Tesseract languages                 | `heb+eng`         |
 | `--jobs`             | Parallel workers                    | Auto (CPU count)  |
 | `--optimize`         | PDF optimization level (0-3)        | 1                 |
@@ -124,7 +124,7 @@ from pathlib import Path
 # Create configuration
 config = OCRConfig(
     input_dir=Path("./pdfs"),
-    output_dir=Path("./output"),
+    output_dir=Path("./output"),  # ignored; outputs go to OCR subfolders
     lang="heb+eng",
     optimize=1,
     jobs=4,

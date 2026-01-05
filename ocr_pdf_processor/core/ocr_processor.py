@@ -2,6 +2,7 @@
 OCR processor module for OCR PDF processor.
 Contains the main OCR processing logic for individual files.
 """
+import shlex
 import time
 from pathlib import Path
 
@@ -16,14 +17,15 @@ def ocr_one(pdf_path: Path, out_dir: Path, args) -> OCRResult:
     
     Args:
         pdf_path: Path to the input PDF file
-        out_dir: Output directory for processed files (ignored - we create .ocr.pdf next to source)
+        out_dir: Output directory for processed files (ignored - we create .ocr.pdf in OCR subfolder)
         args: Configuration arguments object
         
     Returns:
         OCRResult object with processing results
     """
-    # Always create output file next to source with .ocr suffix
-    out_pdf = pdf_path.parent / f"{pdf_path.stem}.ocr.pdf"
+    # Always create output file in OCR subfolder next to source with .ocr suffix
+    ocr_dir = pdf_path.parent / "OCR"
+    out_pdf = ocr_dir / f"{pdf_path.stem}.ocr.pdf"
 
     # read metadata now (for timestamp preservation)
     meta = pdfinfo_dict(pdf_path)
@@ -60,6 +62,9 @@ def ocr_one(pdf_path: Path, out_dir: Path, args) -> OCRResult:
     # Build ocrmypdf cmd
     base = [
         "ocrmypdf",
+        "--pdfa-image-compression",
+        "none",
+        "-q",
         "-l",
         args.lang,
         "--rotate-pages",
@@ -87,7 +92,7 @@ def ocr_one(pdf_path: Path, out_dir: Path, args) -> OCRResult:
     note = "copy"
     status = "copied_no_ocr"
 
-    # write target safely (always create .ocr.pdf next to source)
+    # write target safely (always create .ocr.pdf in OCR folder)
     tmp_target = out_pdf
     if out_pdf.exists():
         tmp_target = Path(str(out_pdf) + ".tmp_ocr")
@@ -96,15 +101,12 @@ def ocr_one(pdf_path: Path, out_dir: Path, args) -> OCRResult:
         if need_ocr:
             note = "redo" if (text_exists and (redo or args.force_ocr_all)) else "ocr"
             cmd = base[:]
-            if text_exists and (redo or args.force_ocr_all):
-                # For redo-ocr, avoid incompatible flags
+            if args.force_ocr_all:
+                cmd.append("--force-ocr")
+            elif text_exists and redo:
                 cmd.append("--redo-ocr")
-                # Skip deskew and clean for redo-ocr compatibility
             else:
-                # For fresh OCR, add the processing flags
                 cmd.append("--skip-text")
-                cmd.append("--deskew")
-                cmd.append("--clean")
             if args.tesseract_time:
                 cmd += ["--tesseract-timeout", str(args.tesseract_time)]
             if args.tesseract_pagesegmode:
@@ -115,6 +117,7 @@ def ocr_one(pdf_path: Path, out_dir: Path, args) -> OCRResult:
             output_path = str(tmp_target)
             
             cmd += [input_path, output_path]
+            print(f"CMD: {shlex.join(cmd)}")
             start = time.time()
             code, out, err = run(
                 cmd, timeout=args.timeout if args.timeout > 0 else None
@@ -145,7 +148,7 @@ def ocr_one(pdf_path: Path, out_dir: Path, args) -> OCRResult:
                 )
             status = "ok_ocr"
         else:
-            # copy - create .ocr.pdf next to source
+            # copy - create .ocr.pdf in OCR folder
             try:
                 tmp_target.write_bytes(pdf_path.read_bytes())
             except Exception:

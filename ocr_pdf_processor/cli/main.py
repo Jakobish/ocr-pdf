@@ -36,7 +36,7 @@ def create_parser(defaults: dict) -> argparse.ArgumentParser:
         nargs="?",
         default=Path(defaults["output_dir"]),
         type=Path,
-        help="Destination directory (default: ./out_pdfs). Ignored if --in-place",
+        help="Destination directory (ignored; outputs go to OCR subfolders)",
     )
     ap.add_argument(
         "--include-glob",
@@ -159,7 +159,7 @@ def create_parser(defaults: dict) -> argparse.ArgumentParser:
         "--no-in-place",
         dest="in_place",
         action="store_false",
-        help="Write outputs to output_dir (no in-place)",
+        help="Write outputs to OCR subfolders (no in-place)",
     )
     ap.add_argument(
         "--preserve-fstimes",
@@ -318,9 +318,7 @@ def main():
     
     # Resolve paths
     args.input_dir = args.input_dir.expanduser().resolve()
-    if not args.in_place:
-        args.output_dir = args.output_dir.expanduser().resolve()
-        args.output_dir.mkdir(parents=True, exist_ok=True)
+    args.output_dir = args.output_dir.expanduser().resolve()
     
     # Handle output directory exclusion
     exclude_globs = list(args.exclude_glob)
@@ -374,4 +372,4 @@ def main():
     csv_reporter.write_results(results, args.csv_append)
     
     print("\nDone. Report:", args.csv)
-    print("OCR files created with .ocr.pdf suffix next to source files")
+    print("OCR files created in OCR subfolders next to source files")

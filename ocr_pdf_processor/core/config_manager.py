@@ -15,7 +15,7 @@ DEFAULT_CONFIG = {
     "input_dir": ".",
     "output_dir": "./out_pdfs",
     "include_glob": ["*.pdf"],
-    "exclude_glob": [],
+    "exclude_glob": ["OCR/**", "*/OCR/**"],
     "exclude_output_dir": True,
     "sort_by": "none",
     "max_files": 0,

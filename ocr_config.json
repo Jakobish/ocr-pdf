@@ -5,15 +5,15 @@
   },
   "output_dir": {
     "value": "./out_pdfs",
-    "description": "Destination directory for processed PDFs (ignored when in_place is true)."
+    "description": "Destination directory for processed PDFs (ignored; outputs go to OCR subfolders)."
   },
   "include_glob": {
     "value": ["*.pdf"],
     "description": "Glob pattern(s) to include, relative to input_dir."
   },
   "exclude_glob": {
-    "value": [],
-    "description": "Glob pattern(s) to exclude, relative to input_dir."
+    "value": ["OCR/**", "*/OCR/**"],
+    "description": "Glob pattern(s) to exclude, relative to input_dir (excludes OCR output folders)."
   },
   "exclude_output_dir": {
     "value": true,
@@ -52,7 +52,7 @@
     "description": "OCRmyPDF --jobs per file (integer or 'auto')."
   },
   "redo_policy": {
-    "value": "auto",
+    "value": "aggressive",
     "description": "Redo policy: auto, aggressive, never."
   },
   "dup_threshold": {
@@ -64,15 +64,15 @@
     "description": "Pages to sample when detecting existing text."
   },
   "force_ocr_all": {
-    "value": false,
+    "value": true,
     "description": "Force OCR even if a text layer exists."
   },
   "overwrite": {
-    "value": false,
+    "value": true,
     "description": "Overwrite existing output files."
   },
   "in_place": {
-    "value": false,
+    "value": true,
     "description": "Process and replace PDFs in place."
   },
   "preserve_fstimes": {
