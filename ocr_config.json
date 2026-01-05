@@ -1,0 +1,106 @@
+{
+  "input_dir": {
+    "value": ".",
+    "description": "Source directory to scan for PDFs."
+  },
+  "output_dir": {
+    "value": "./out_pdfs",
+    "description": "Destination directory for processed PDFs (ignored when in_place is true)."
+  },
+  "include_glob": {
+    "value": ["*.pdf"],
+    "description": "Glob pattern(s) to include, relative to input_dir."
+  },
+  "exclude_glob": {
+    "value": [],
+    "description": "Glob pattern(s) to exclude, relative to input_dir."
+  },
+  "exclude_output_dir": {
+    "value": true,
+    "description": "Skip output_dir when it is under input_dir to avoid reprocessing output."
+  },
+  "sort_by": {
+    "value": "none",
+    "description": "Sort order for inputs: none, path, mtime, size."
+  },
+  "max_files": {
+    "value": 0,
+    "description": "Limit number of files processed (0 = no limit)."
+  },
+  "print_every": {
+    "value": 1,
+    "description": "Print progress every N files (1 = every file, 0 = errors only)."
+  },
+  "lang": {
+    "value": "heb+eng",
+    "description": "Tesseract language codes."
+  },
+  "optimize": {
+    "value": 1,
+    "description": "OCRmyPDF optimization level (0-3)."
+  },
+  "skip_big_mb": {
+    "value": 2048,
+    "description": "Skip files larger than this size in MB."
+  },
+  "jobs": {
+    "value": "auto",
+    "description": "Parallel worker threads (integer or 'auto')."
+  },
+  "ocr_jobs": {
+    "value": "auto",
+    "description": "OCRmyPDF --jobs per file (integer or 'auto')."
+  },
+  "redo_policy": {
+    "value": "auto",
+    "description": "Redo policy: auto, aggressive, never."
+  },
+  "dup_threshold": {
+    "value": 0.15,
+    "description": "Duplicate-line ratio threshold for auto redo."
+  },
+  "text_sample_pages": {
+    "value": 3,
+    "description": "Pages to sample when detecting existing text."
+  },
+  "force_ocr_all": {
+    "value": false,
+    "description": "Force OCR even if a text layer exists."
+  },
+  "overwrite": {
+    "value": false,
+    "description": "Overwrite existing output files."
+  },
+  "in_place": {
+    "value": false,
+    "description": "Process and replace PDFs in place."
+  },
+  "preserve_fstimes": {
+    "value": "xmp",
+    "description": "Preserve output file times from: xmp, fs, none."
+  },
+  "timeout": {
+    "value": 0,
+    "description": "Per-file timeout in seconds (0 = no timeout)."
+  },
+  "tesseract_time": {
+    "value": 0,
+    "description": "Tesseract timeout per page in seconds (0 = no timeout)."
+  },
+  "tesseract_pagesegmode": {
+    "value": 0,
+    "description": "Tesseract page segmentation mode (0 = auto)."
+  },
+  "resume_from_csv": {
+    "value": false,
+    "description": "Skip files already listed in the CSV report."
+  },
+  "csv_append": {
+    "value": false,
+    "description": "Append to existing CSV instead of overwriting."
+  },
+  "csv": {
+    "value": "ocr_report.csv",
+    "description": "CSV report path."
+  }
+}

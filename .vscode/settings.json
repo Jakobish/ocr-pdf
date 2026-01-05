@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./ocr_pdf_processor/utils",
+        "./ocr_pdf_processor/core"
+    ]
+}
