@@ -5,19 +5,13 @@
 [![Build Status] (https://img.shields.io/badge/build-passing-brightgreen.svg)] (<https://github.com/kobishahar/ocr-pdf-processor/actions>)
 ()
 
-A robust Python package for batch OCR processing of PDF files with support for Hebrew and English text. Built with production-ready architecture and modern Python best practices.
+A thin Python wrapper around `ocrmypdf` for recursively OCR'ing PDF files.
 
-## 🌟 Features
+## Features
 
-- **Multi-language Support**: Hebrew and English OCR using Tesseract
-- **Batch Processing**: Process hundreds of PDFs efficiently with parallel execution
-- **Smart Text Detection**: Automatically detects existing text layers and duplicates
-- **In-place Processing**: Safe in-place processing with temporary file backup
-- **Metadata Preservation**: Maintains original file timestamps and metadata
-- **Flexible Configuration**: JSON configuration files and command-line options
-- **Comprehensive Reporting**: CSV reports for processing results
-- **Resume Capability**: Resume interrupted processing from CSV reports
-- **Production Ready**: Modular architecture, proper error handling, logging
+- Recursively scans for PDFs with include/exclude globs
+- Builds and runs `ocrmypdf` with args from `ocr_config.json`
+- Writes outputs to `OCR/<name>.ocr.pdf` next to each source PDF
 
 ## 📦 Installation
 
@@ -59,37 +53,29 @@ pip install ocr-pdf-processor
 ### Command Line Usage
 
 ```bash
-# Basic usage - process all PDFs in current directory
+# Basic usage - process all PDFs in current directory (recursive)
 python app.py
 
-# Process specific directory (outputs go to OCR subfolders)
+# Process a directory (outputs go to OCR subfolders next to each PDF)
 python app.py /path/to/input
 
-# In-place processing (recommended for safety)
-python app.py --in-place --preserve-fstimes xmp
-
-# Force OCR on all files
-python app.py --force-ocr-all
-
-# Resume from previous run
-python app.py --resume-from-csv --csv-append
+# Process a single file
+python app.py /path/to/file.pdf
 ```
 
 ### Configuration File
 
-Create a `ocr_config.json` file:
+Edit `ocr_config.json` (next to `app.py`):
 
 ```json
 {
   "input_dir": "./pdfs",
-  "output_dir": "./output",
   "include_glob": ["*.pdf"],
-  "exclude_glob": ["OCR/**", "*/OCR/**", "*_processed.pdf"],
-  "lang": "heb+eng",
-  "optimize": 1,
-  "jobs": 4,
-  "preserve_fstimes": "xmp",
-  "csv": "ocr_report.csv"
+  "exclude_glob": ["OCR/**", "*/OCR/**"],
+  "jobs": "auto",
+  "overwrite": false,
+  "timeout": 0,
+  "ocrmypdf_args": ["-l", "heb+eng", "--skip-text", "--rotate-pages", "--deskew", "--clean"]
 }
 ```
 
@@ -103,42 +89,23 @@ python app.py --config ocr_config.json
 
 | Option               | Description                         | Default           |
 | -------------------- | ----------------------------------- | ----------------- |
-| `input_dir`          | Source directory for PDFs           | Current directory |
-| `output_dir`         | Output directory (ignored)          | `./out_pdfs`      |
-| `--lang`             | Tesseract languages                 | `heb+eng`         |
+| `input`              | Directory or single PDF             | `input_dir`       |
 | `--jobs`             | Parallel workers                    | Auto (CPU count)  |
-| `--optimize`         | PDF optimization level (0-3)        | 1                 |
-| `--in-place`         | Process files in place              | False             |
-| `--preserve-fstimes` | Preserve timestamps (xmp/fs/none)   | xmp               |
-| `--resume-from-csv`  | Skip processed files                | False             |
-| `--force-ocr-all`    | Force OCR on all files              | False             |
-| `--redo-policy`      | Redo policy (auto/aggressive/never) | auto              |
+| `--ocrmypdf-args`    | Args passed to `ocrmypdf`           | From config       |
+| `--overwrite`        | Overwrite existing `*.ocr.pdf`      | False             |
 | `--max-files`        | Limit processed files               | No limit          |
 
 ## 📚 Python API
 
 ```python
-from ocr_pdf_processor import OCRConfig, ocr_one, CSVReporter
+from ocr_pdf_processor import ocr_one
 from pathlib import Path
 
-# Create configuration
-config = OCRConfig(
-    input_dir=Path("./pdfs"),
-    output_dir=Path("./output"),  # ignored; outputs go to OCR subfolders
-    lang="heb+eng",
-    optimize=1,
-    jobs=4,
-    # ... other options
-)
-
-# Process single file
+# Process a single file (pass an argparse-like object with `ocrmypdf_args`, etc.)
 pdf_path = Path("./document.pdf")
-result = ocr_one(pdf_path, config.output_dir, config)
+args = type("Args", (), {"ocrmypdf_args": ["-l", "heb+eng", "--skip-text"], "overwrite": False, "timeout": 0})()
+result = ocr_one(pdf_path, args)
 print(f"Status: {result.status}")
-
-# Generate CSV report
-reporter = CSVReporter(Path("report.csv"))
-reporter.write_results([result])
 ```
 
 ## 🏗️ Project Structure
@@ -155,7 +122,6 @@ ocr-pdf-processor/
 │   ├── utils/                 # Utility modules
 │   │   ├── __init__.py
 │   │   ├── shell_utils.py     # Shell command utilities
-│   │   └── pdf_utils.py       # PDF processing utilities
 │   └── cli/                   # Command-line interface
 │       ├── __init__.py
 │       └── main.py            # CLI entry point

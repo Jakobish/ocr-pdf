@@ -1,43 +1,43 @@
 """
-Configuration management module for OCR PDF processor.
-Handles loading, parsing, and validating configuration from files and command line arguments.
+Configuration management for the OCR PDF processor.
+
+Goal: keep Python as a thin wrapper around `ocrmypdf` by only:
+- loading settings
+- scanning PDFs (include/exclude + recursion)
+- building and running the `ocrmypdf` command
 """
 import argparse
 import json
 import os
 import sys
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 
-DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent / "ocr_config.json"
-DEFAULT_CONFIG = {
+DEFAULT_CONFIG_PATH = Path(__file__).resolve().parents[2] / "ocr_config.json"
+DEFAULT_CONFIG: Dict[str, Any] = {
     "input_dir": ".",
-    "output_dir": "./out_pdfs",
     "include_glob": ["*.pdf"],
     "exclude_glob": ["OCR/**", "*/OCR/**"],
-    "exclude_output_dir": True,
     "sort_by": "none",
     "max_files": 0,
     "print_every": 1,
-    "lang": "heb+eng",
-    "optimize": 1,
-    "skip_big_mb": 2048,
     "jobs": "auto",
-    "ocr_jobs": "auto",
-    "redo_policy": "auto",
-    "dup_threshold": 0.15,
-    "force_ocr_all": False,
     "overwrite": False,
-    "in_place": False,
-    "resume_from_csv": False,
-    "csv_append": False,
-    "preserve_fstimes": "xmp",
     "timeout": 0,
-    "text_sample_pages": 3,
-    "tesseract_time": 0,
-    "tesseract_pagesegmode": 0,
-    "csv": "ocr_report.csv",
+    # Passed verbatim to `ocrmypdf` (excluding input and output paths).
+    "ocrmypdf_args": [
+        "-l",
+        "heb+eng",
+        "--skip-text",
+        "--rotate-pages",
+        "--deskew",
+        "--clean",
+        "--output-type",
+        "pdfa",
+        "--optimize",
+        "1",
+    ],
 }
 
 
@@ -127,20 +127,6 @@ def intish(value: Any, default: int) -> int:
     return default
 
 
-def floatish(value: Any, default: float) -> float:
-    """Convert value to float if possible, otherwise return default."""
-    if isinstance(value, bool):
-        return default
-    if isinstance(value, (int, float)):
-        return float(value)
-    if isinstance(value, str):
-        try:
-            return float(value.strip())
-        except ValueError:
-            return default
-    return default
-
-
 def listish(value: Any, default: list) -> list:
     """Convert value to list if possible, otherwise return default."""
     if isinstance(value, list):
@@ -167,6 +153,24 @@ def resolve_jobs(value: Any, fallback: int) -> int:
     return intish(value, fallback)
 
 
+def shlex_list(value: Any, default: List[str]) -> List[str]:
+    """Parse a string or list into a list of CLI args."""
+    if isinstance(value, list):
+        items = [str(v) for v in value if str(v).strip()]
+        return items or default
+    if isinstance(value, tuple):
+        items = [str(v) for v in value if str(v).strip()]
+        return items or default
+    if isinstance(value, str):
+        v = value.strip()
+        if not v:
+            return default
+        import shlex
+
+        return shlex.split(v)
+    return default
+
+
 def build_defaults(user_config: Dict[str, Any]) -> Dict[str, Any]:
     """Build complete default configuration with user overrides."""
     merged = dict(DEFAULT_CONFIG)
@@ -175,49 +179,32 @@ def build_defaults(user_config: Dict[str, Any]) -> Dict[str, Any]:
 
     cpu_count = os.cpu_count()
     jobs_default = min(8, (cpu_count or 4))
-    ocr_jobs_default = min(4, (cpu_count or 2))
 
     defaults = {
         "input_dir": stringish(merged.get("input_dir"), DEFAULT_CONFIG["input_dir"]),
-        "output_dir": stringish(merged.get("output_dir"), DEFAULT_CONFIG["output_dir"]),
-        "include_glob": listish(merged.get("include_glob"), DEFAULT_CONFIG["include_glob"]),
-        "exclude_glob": listish(merged.get("exclude_glob"), DEFAULT_CONFIG["exclude_glob"]),
-        "exclude_output_dir": boolish(merged.get("exclude_output_dir"), DEFAULT_CONFIG["exclude_output_dir"]),
+        "include_glob": listish(
+            merged.get("include_glob"), DEFAULT_CONFIG["include_glob"]
+        ),
+        "exclude_glob": listish(
+            merged.get("exclude_glob"), DEFAULT_CONFIG["exclude_glob"]
+        ),
         "sort_by": stringish(merged.get("sort_by"), DEFAULT_CONFIG["sort_by"]),
         "max_files": intish(merged.get("max_files"), DEFAULT_CONFIG["max_files"]),
         "print_every": intish(merged.get("print_every"), DEFAULT_CONFIG["print_every"]),
-        "lang": stringish(merged.get("lang"), DEFAULT_CONFIG["lang"]),
-        "optimize": intish(merged.get("optimize"), DEFAULT_CONFIG["optimize"]),
-        "skip_big_mb": intish(merged.get("skip_big_mb"), DEFAULT_CONFIG["skip_big_mb"]),
         "jobs": resolve_jobs(merged.get("jobs"), jobs_default),
-        "ocr_jobs": resolve_jobs(merged.get("ocr_jobs"), ocr_jobs_default),
-        "redo_policy": stringish(merged.get("redo_policy"), DEFAULT_CONFIG["redo_policy"]),
-        "dup_threshold": floatish(merged.get("dup_threshold"), DEFAULT_CONFIG["dup_threshold"]),
-        "force_ocr_all": boolish(merged.get("force_ocr_all"), DEFAULT_CONFIG["force_ocr_all"]),
         "overwrite": boolish(merged.get("overwrite"), DEFAULT_CONFIG["overwrite"]),
-        "in_place": boolish(merged.get("in_place"), DEFAULT_CONFIG["in_place"]),
-        "resume_from_csv": boolish(merged.get("resume_from_csv"), DEFAULT_CONFIG["resume_from_csv"]),
-        "csv_append": boolish(merged.get("csv_append"), DEFAULT_CONFIG["csv_append"]),
-        "preserve_fstimes": stringish(merged.get("preserve_fstimes"), DEFAULT_CONFIG["preserve_fstimes"]),
         "timeout": intish(merged.get("timeout"), DEFAULT_CONFIG["timeout"]),
-        "text_sample_pages": intish(merged.get("text_sample_pages"), DEFAULT_CONFIG["text_sample_pages"]),
-        "tesseract_time": intish(merged.get("tesseract_time"), DEFAULT_CONFIG["tesseract_time"]),
-        "tesseract_pagesegmode": intish(merged.get("tesseract_pagesegmode"), DEFAULT_CONFIG["tesseract_pagesegmode"]),
-        "csv": stringish(merged.get("csv"), DEFAULT_CONFIG["csv"]),
+        "ocrmypdf_args": shlex_list(
+            merged.get("ocrmypdf_args"), DEFAULT_CONFIG["ocrmypdf_args"]
+        ),
     }
 
     # Validate enum values
-    if defaults["redo_policy"] not in ("auto", "aggressive", "never"):
-        defaults["redo_policy"] = DEFAULT_CONFIG["redo_policy"]
-    if defaults["preserve_fstimes"] not in ("xmp", "fs", "none"):
-        defaults["preserve_fstimes"] = DEFAULT_CONFIG["preserve_fstimes"]
     if defaults["sort_by"] not in ("none", "path", "mtime", "size"):
         defaults["sort_by"] = DEFAULT_CONFIG["sort_by"]
     if defaults["max_files"] < 0:
         defaults["max_files"] = 0
     if defaults["print_every"] < 0:
         defaults["print_every"] = DEFAULT_CONFIG["print_every"]
-    if defaults["text_sample_pages"] < 1:
-        defaults["text_sample_pages"] = DEFAULT_CONFIG["text_sample_pages"]
 
     return defaults
