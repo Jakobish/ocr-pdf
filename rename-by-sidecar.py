@@ -2,9 +2,10 @@ import argparse
 import logging
 import re
 from pathlib import Path
-import google.generativeai as genai
+from google import genai
+from google.genai import errors
 
-# Requirements: pip install google-generativeai
+# Requirements: pip install google-genai
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
@@ -38,8 +39,7 @@ def process_files_with_sidecar(directory, api_key, model_name, dry_run, recursiv
     """
     Renames PDFs by reading the corresponding .sidecar.txt files.
     """
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(model_name)
+    client = genai.Client(api_key=api_key)
     
     path = Path(directory)
     files = path.rglob("*.pdf") if recursive else path.glob("*.pdf")
@@ -57,15 +57,24 @@ def process_files_with_sidecar(directory, api_key, model_name, dry_run, recursiv
         try:
             # Read the extracted text from the sidecar
             text_content = sidecar_file.read_text(encoding='utf-8').strip()
-            
+
             if len(text_content) < 10:
                 logging.warning(f"Sidecar for {pdf_file.name} is empty or too short.")
                 continue
 
             # Send the first 2000 characters to Gemini
-            response = model.generate_content(PROMPT_TEMPLATE.format(text=text_content[:2000]))
+            try:
+                response = client.models.generate_content(model=model_name, contents=PROMPT_TEMPLATE.format(text=text_content[:2000]))
+            except errors.APIError as e:
+                logging.error(f"API error for {pdf_file.name}: {e}")
+                continue
+
+            if response.text is None:
+                logging.warning(f"AI response for {pdf_file.name} is None")
+                continue
+
             suggested_name = response.text.strip()
-            
+
             if "Insufficient-Content" in suggested_name or not suggested_name:
                 logging.warning(f"AI could not name {pdf_file.name}")
                 continue
