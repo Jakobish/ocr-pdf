@@ -4,7 +4,7 @@ This file provides guidance to agents when working with code in this repository.
 
 ## Non-Obvious Project-Specific Rules
 
-**System Dependencies Required**: Must have `ocrmypdf`, `tesseract-ocr-heb`, and `poppler-utils` installed system-wide - these are NOT Python dependencies.
+**System Dependencies Required**: Must have `ocrmypdf`, `tesseract-ocr-heb`, and `poppler-utils` instal led system-wide - these are NOT Python dependencies.
 
 **Output File Naming**: Always creates `.ocr.pdf` files in an `OCR/` subfolder next to each source file (output_dir parameter is ignored).
 

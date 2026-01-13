@@ -3,8 +3,7 @@ Shell utilities module for OCR PDF processor.
 Provides functions for running shell commands and checking command availability.
 """
 import subprocess
-import sys
-from typing import Tuple, Optional
+from typing import Tuple
 
 
 def run(cmd, timeout=None) -> Tuple[int, str, str]:

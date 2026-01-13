@@ -1,11 +1,10 @@
 # OCR PDF Processor
 
-[![Python 3.8+] (https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status] (https://img.shields.io/badge/build-passing-brightgreen.svg)] (<https://github.com/kobishahar/ocr-pdf-processor/actions>)
-()
+[![Build Status](https://img.shields.io/github/actions/workflow/status/kobishahar/ocr-pdf-processor/ci.yml?branch=main)](https://github.com/kobishahar/ocr-pdf-processor/actions)
 
-A thin Python wrapper around `ocrmypdf` for recursively OCR'ing PDF files.
+A Python wrapper around `ocrmypdf` for recursively processing PDF files with OCR capabilities. Supports Hebrew and English text recognition, batch processing, and configurable output options.
 
 ## Features
 

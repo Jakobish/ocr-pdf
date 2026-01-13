@@ -1,3 +1,6 @@
+# Usage
+
+```bash
 usage: OCRmyPDF [-h] [-l LANGUAGES] [--image-dpi DPI]
                 [--output-type {pdfa,pdf,pdfa-1,pdfa-2,pdfa-3,none}]
                 [--sidecar [FILE]] [--version] [-j N] [-q] [-v [VERBOSE]]
@@ -23,21 +26,30 @@ usage: OCRmyPDF [-h] [-l LANGUAGES] [--image-dpi DPI]
                 [--pdfa-image-compression {auto,jpeg,lossless}]
                 input_pdf_or_image output_pdf
 
-Generates a searchable PDF or PDF/A from a regular PDF.
+```
 
-OCRmyPDF rasterizes each page of the input PDF, optionally corrects page
-rotation and performs image processing, runs the Tesseract OCR engine on the
+## ℹ️ Introduction
+
+Generates a searchable **PDF** or **PDF/A** from a regular PDF.
+
+**OCRmyPDF** rasterizes each page of the input PDF, optionally corrects page
+rotation and performs image processing, runs the **Tesseract OCR** engine on the
 image, and then creates a PDF from the OCR information.
 
-positional arguments:
+### positional arguments
+
+```bash
   input_pdf_or_image    PDF file containing the images to be OCRed (or '-' to
                         read from standard input)
   output_pdf            Output searchable PDF file (or '-' to write to
                         standard output). Existing files will be overwritten.
                         If same as input file, the input file will be updated
                         only if processing is successful.
+```
 
-options:
+## options
+
+```bash
   -h, --help            show this help message and exit
   -l, --language LANGUAGES
                         Language(s) of the file to be OCRed (see tesseract
@@ -61,15 +73,18 @@ options:
   --sidecar [FILE]      Generate sidecar text files that contain the same text
                         recognized by Tesseract. This may be useful for
                         building a OCR text database. If FILE is omitted, the
-                        sidecar file be named {output_file}.txt; the next
+                        sidecar file be named **{output_file}.txt**; the next
                         argument must NOT be the name of the input PDF. If
                         FILE is set to '-', the sidecar is written to stdout
                         (a convenient way to preview OCR quality). The output
                         file and sidecar may not both use stdout at the same
                         time.
   --version             Print program version and exit
+```
 
-Job control options:
+## Job control options
+
+```bash
   -j, --jobs N          Use up to N CPU cores simultaneously (default: use
                         all).
   -q, --quiet           Suppress INFO messages
@@ -78,18 +93,24 @@ Job control options:
                         verbose level. Use `-v 1` typically for much more
                         detailed logging. Higher numbers are probably only
                         useful in debugging.
+```
 
-Metadata options:
+## Metadata options
+
   Set output PDF/A metadata (default: copy input document's metadata)
 
+```bash
   --title TITLE         Set document title (place multiple words in quotes)
   --author AUTHOR       Set document author
   --subject SUBJECT     Set document subject description
   --keywords KEYWORDS   Set document keywords
+```
 
-Image preprocessing options:
+## Image preprocessing options
+
   Options to improve the quality of the final PDF and OCR
 
+```bash
   -r, --rotate-pages    Automatically rotate pages based on detected text
                         orientation
   --remove-background   Attempt to remove background from gray or color pages,
@@ -102,16 +123,20 @@ Image preprocessing options:
                         in the final PDF. Might remove desired content.
   --unpaper-args UNPAPER_ARGS
                         A quoted string of arguments to pass to unpaper.
-                        Requires --clean. Example: --unpaper-args '--layout
+                        Requires ```--clean```. Example: --unpaper-args '--layout
                         double'.
   --oversample DPI      Oversample images to at least the specified DPI, to
                         improve OCR results slightly
   --remove-vectors      EXPERIMENTAL. Mask out any vector objects in the PDF
                         so that they will not be included in OCR. This can
                         eliminate false characters.
+```
 
-OCR options:
+## OCR options
+
   Control how OCR is applied
+
+  ```bash
 
   -f, --force-ocr       Rasterize any text or vector objects on each page,
                         apply OCR, and save the rastered output (this rewrites
@@ -132,9 +157,13 @@ OCR options:
                         Normally, OCRmyPDF will refuse to OCR a PDF that has a
                         digital signature. This option allows OCR to proceed,
                         but the digital signature will be invalidated.
+```
 
-Advanced:
+## Advanced
+
   Advanced options to control OCRmyPDF
+
+```bash
 
   --pages PAGES         Limit OCR to the specified pages (ranges or comma
                         separated), skipping others
@@ -171,15 +200,21 @@ Advanced:
                         path to the Python file that contains the plugin.
                         Plugins must conform to the specification in the
                         OCRmyPDF documentation.
+```
 
-Debugging:
+## Debugging
+
   Arguments to help with troubleshooting and debugging
 
-  -k, --keep-temporary-files
-                        Keep temporary files (helpful for debugging)
+```-k, --keep-temporary-files```
 
-Tesseract:
+- Keep temporary files (helpful for debugging)
+
+## Tesseract options
+
   Advanced control of Tesseract OCR
+
+```bash
 
   --tesseract-config CFG
                         Additional Tesseract configuration files -- see
@@ -218,12 +253,12 @@ Tesseract:
                         larger. If this parameter is not supplied, Tesseract
                         will error out and produce no OCR on the page in
                         question. This argument should be used with a high
-                        value of --tesseract-timeout to ensure Tesseract has
+                        value of ```--tesseract-timeout``` to ensure Tesseract has
                         enough to time.
   --tesseract-downsample-above TESSERACT_DOWNSAMPLE_ABOVE
                         Downsample images larger than this size pixel size in
-                        either dimension before OCR. --tesseract-downsample-
-                        large-images downsamples only when an image exceeds
+                        either dimension before OCR. ```--tesseract-downsample-
+                        large-images``` downsamples only when an image exceeds
                         Tesseract's internal limits. This argument causes
                         downsampling to occur when an image exceeds the given
                         size. This may reduce OCR quality, but on large images
@@ -235,10 +270,13 @@ Tesseract:
                         especially for specialized and technical documents.
   --user-patterns FILE  Specify the location of the Tesseract user patterns
                         file.
+```
 
-Optimization options:
+## Optimization options
+
   Control how the PDF is optimized after OCR
 
+```bash
   -O, --optimize {0,1,2,3}
                         Control how PDF is optimized after processing:0 - do
                         not optimize; 1 - do safe, lossless optimizations
@@ -257,10 +295,13 @@ Optimization options:
                         enabled.
   --jbig2-threshold T   Adjust JBIG2 symbol code classification threshold
                         (default 0.85), range 0.4 to 0.9.
+```
 
-Ghostscript:
+## Ghostscript
+
   Advanced control of Ghostscript
 
+```bash
   --color-conversion-strategy STRATEGY
                         Set Ghostscript color conversion strategy
   --pdfa-image-compression {auto,jpeg,lossless}
@@ -273,6 +314,7 @@ Ghostscript:
                         all pages, including those for which OCR was skipped.
                         Not supported for --output-type=pdf ; that setting
                         preserves the original compression of all images.
+```
 
 OCRmyPDF attempts to keep the output file at about the same size.  If a file
 contains losslessly compressed images, and images in the output file will be
@@ -286,17 +328,18 @@ with the wide variety of PDFs that exist in the wild.
 When a PDF page contains text, OCRmyPDF assumes that the page has already
 been OCRed or is a "born digital" page that should not be OCRed.  The default
 behavior is to exit in this case without producing a file.  You can use the
-option --skip-text to ignore pages with text, or --force-ocr to rasterize
+option ```--skip-text``` to ignore pages with text, or ```--force-ocr`` to rasterize
 all objects on the page and produce an image-only PDF as output.
 
+```bash
     ocrmypdf --skip-text file_with_some_text_pages.pdf output.pdf
-
     ocrmypdf --force-ocr word_document.pdf output.pdf
+```
 
 If you are concerned about long-term archiving of PDFs, use the default option
---output-type pdfa which converts the PDF to a standardized PDF/A-2b.  This
+```--output-type pdfa``` which converts the PDF to a standardized PDF/A-2b.  This
 removes some features from the PDF such as Javascript or forms. If you want to
-minimize the number of changes made to your PDF, use --output-type pdf.
+minimize the number of changes made to your PDF, use ```--output-type pdf```.
 
 If OCRmyPDF is given an image file as input, it will attempt to convert the
 image to a PDF before processing.  For more control over the conversion of
@@ -306,7 +349,7 @@ For example, this command uses img2pdf to convert all .png files beginning
 with the 'page' prefix to a PDF, fitting each image on A4-sized paper, and
 sending the result to OCRmyPDF through a pipe.
 
-    img2pdf --pagesize A4 page*.png | ocrmypdf - myfile.pdf
+```img2pdf --pagesize A4 page*.png | ocrmypdf - myfile.pdf```
 
 Online documentation is located at:
-    https://ocrmypdf.readthedocs.io/en/latest/introduction.html
+    <https://ocrmypdf.readthedocs.io/en/latest/introduction.html>
