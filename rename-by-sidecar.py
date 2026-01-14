@@ -19,7 +19,7 @@ Rules:
 5. Fallback: If text is insufficient, respond ONLY with: Insufficient-Content
 
 Examples:
-- הוט-מובייל-חשבונית-מס-12-06-2024-קובי-שחר
+- הוט-מובייל-חשבונית-מס-12-06-2024-אבי-לוי
 - דוח-שנתי-מנורה-מבטחים-2020-אבי-כהן
 - Cloudflare-Invoice-2023-10-07
 
